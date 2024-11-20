@@ -1,12 +1,8 @@
 import './App.css'
 import {useState} from "react";
+import {GameCell, GameInfo} from "./modules";
+import {Cell, Symbol, SYMBOL_O, SYMBOL_X, WinnerLine} from "./types";
 
-const SYMBOL_X = 'X' as const;
-const SYMBOL_O = 'O' as const;
-
-type Symbol = typeof SYMBOL_X | typeof SYMBOL_O;
-type Cell = Symbol | null;
-type WinnerLine = [number, number, number];
 
 const computeWinner: (cells: Cell[]) => WinnerLine | null = (cells: Cell[]) => {
     const lines: Array<Array<number>> = [
@@ -33,15 +29,7 @@ const computeWinner: (cells: Cell[]) => WinnerLine | null = (cells: Cell[]) => {
 export const App = () => {
     const [currentStep, setCurrentStep] = useState<Symbol>(SYMBOL_O);
     const [cells, setCells] = useState<Cell[]>([SYMBOL_O, null, null, SYMBOL_O, SYMBOL_X, null, null, null, null]);
-    const [winnerSequence, setWinnerSequence] = useState<WinnerLine | null>();
-
-    const getSymbolClassName = (symbol: Symbol) => {
-        if (symbol === SYMBOL_O) return 'symbol--o';
-        if (symbol === SYMBOL_X) return 'symbol--x';
-        return '';
-    }
-
-    const renderSymbol = (symbol: Symbol) => <span className={`symbol ${getSymbolClassName(symbol)}`}>{symbol}</span>
+    const [winnerSequence, setWinnerSequence] = useState<WinnerLine | null>(null);
 
     const handleCellClick = (index: number) => {
         if (cells[index] || winnerSequence) {
@@ -68,18 +56,14 @@ export const App = () => {
 
     return (
         <div className="game">
-            <div className="game-info">
-                {isDraw ? "Ничья" : winnerSequence ? 'Победитель:' : 'Ход:'}
-                {!isDraw && renderSymbol(winnerSymbol ?? currentStep)}
-            </div>
+            <GameInfo isDraw={isDraw} currentStep={currentStep}
+                      winnerSymbol={winnerSymbol}/>
             <div className="game-field">
                 {cells.map((symbol, index) => {
-                    const isWinner = winnerSequence?.includes(index);
+                    const isWinner = winnerSequence?.includes(index) ?? false;
 
-                    return <button key={index}
-                                   className={`cell ${isWinner ? 'cell--win' : ''}`}
-                                   onClick={() => handleCellClick(index)}
-                    >{symbol ? renderSymbol(symbol) : null}</button>
+                    return <GameCell key={index} isWinner={isWinner} onClick={() => handleCellClick(index)}
+                                     symbol={symbol}/>
                 })}
             </div>
             <button className="reset" onClick={handleResetClick}>Очистить</button>
