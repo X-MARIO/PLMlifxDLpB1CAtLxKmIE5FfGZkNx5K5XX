@@ -1,35 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const SYMBOL_X = 'X' as const;
+const SYMBOL_O = 'O' as const;
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+type Symbol = typeof SYMBOL_X | typeof SYMBOL_O;
+
+function App() {
+    const cells = [SYMBOL_O, null, null, SYMBOL_O, SYMBOL_X, null, null, null, null];
+    const currentStep = SYMBOL_O;
+
+    const getSymbolClassName = (symbol: Symbol) => {
+        if (symbol === SYMBOL_O) return 'symbol--o';
+        if (symbol === SYMBOL_X) return 'symbol--x';
+        return '';
+    }
+
+    const renderSymbol = (symbol: Symbol) => <span className={`symbol ${getSymbolClassName(symbol)}`}>{symbol}</span>
+
+    return (
+        <div className="game">
+            <div className="game-info">
+                Ход: {renderSymbol(currentStep)}
+            </div>
+            <div className="game-field">
+                {cells.map((symbol, index) => {
+                    return <button key={index} className="cell">{symbol ? renderSymbol(symbol) : null}</button>
+                })}
+            </div>
+        </div>
+    )
 }
 
 export default App
