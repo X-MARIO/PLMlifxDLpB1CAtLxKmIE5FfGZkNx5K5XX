@@ -6,14 +6,14 @@ export const useGameState: () => {
     cells: Cell[],
     currentStep: Symbol,
     winnerSequence: WinnerLine | null,
-    handleCellClick:  (index: number) => void,
+    handleCellClick: (index: number) => void,
     handleResetClick: () => void,
     winnerSymbol: Symbol | null,
     isDraw: boolean,
 } = () => {
-    const [currentStep, setCurrentStep] = useState<Symbol>(SYMBOL_O);
-    const [cells, setCells] = useState<Cell[]>([SYMBOL_O, null, null, SYMBOL_O, SYMBOL_X, null, null, null, null]);
-    const [winnerSequence, setWinnerSequence] = useState<WinnerLine | null>(null);
+    const [currentStep, setCurrentStep] = useState<Symbol>(() => SYMBOL_O);
+    const [cells, setCells] = useState<Cell[]>(() => [SYMBOL_O, null, null, SYMBOL_O, SYMBOL_X, null, null, null, null]);
+    const [winnerSequence, setWinnerSequence] = useState<WinnerLine | null>(() => null);
 
     const handleCellClick = (index: number) => {
         if (cells[index] || winnerSequence) {
