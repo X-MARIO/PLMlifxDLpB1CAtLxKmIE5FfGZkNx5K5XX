@@ -30,7 +30,7 @@ const computeWinner: (cells: Cell[]) => WinnerLine | null = (cells: Cell[]) => {
     return null;
 }
 
-function App() {
+export const App = () => {
     const [currentStep, setCurrentStep] = useState<Symbol>(SYMBOL_O);
     const [cells, setCells] = useState<Cell[]>([SYMBOL_O, null, null, SYMBOL_O, SYMBOL_X, null, null, null, null]);
     const [winnerSequence, setWinnerSequence] = useState<WinnerLine | null>();
@@ -57,12 +57,20 @@ function App() {
         setWinnerSequence(winner);
     }
 
+    const handleResetClick = () => {
+        setCells(Array.from({length: 9}, () => null));
+        setCurrentStep(SYMBOL_X);
+        setWinnerSequence(null);
+    }
+
     const winnerSymbol: Symbol | null = winnerSequence ? cells[winnerSequence[0]] : null;
+    const isDraw: boolean = !winnerSymbol && cells.filter(Boolean).length === 9;
 
     return (
         <div className="game">
             <div className="game-info">
-                {winnerSequence ? 'Победитель:' : 'Ход:'} {renderSymbol(winnerSymbol ?? currentStep)}
+                {isDraw ? "Ничья" : winnerSequence ? 'Победитель:' : 'Ход:'}
+                {!isDraw && renderSymbol(winnerSymbol ?? currentStep)}
             </div>
             <div className="game-field">
                 {cells.map((symbol, index) => {
@@ -74,8 +82,7 @@ function App() {
                     >{symbol ? renderSymbol(symbol) : null}</button>
                 })}
             </div>
+            <button className="reset" onClick={handleResetClick}>Очистить</button>
         </div>
     )
 }
-
-export default App
